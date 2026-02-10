@@ -6,27 +6,27 @@ set.seed(1234)
 # # Crear Muestra ------
 # Ejemplo de uso Normal Univariada
 # Definir medias
-betas <- matrix(c(1,1,0,5), ncol = 1, byrow = F)
-#betas <- matrix(c(c(1,10,0), c(-3,14,0)), ncol = 2, byrow = F)
+#betas <- matrix(c(1,1,0,5), ncol = 1, byrow = F)
+betas <- matrix(c(c(1,10), c(-3,14)), ncol = 2, byrow = F)
 #betas <- matrix(c(c(1,10,0), c(-3,14,0), c(-8, 18, 0)), ncol = 3, byrow = F)
 #betas <- matrix(c(c(5,10,7),c(15, 20, 5),c(-20,-15, 3),c(-10, -5, 1)), ncol = 4 , byrow = F)
 # Definir matrices de covarianza
-sigmas2 <- c(1)
-#sigmas2 <- c(.5, 1)
+#sigmas2 <- c(1)
+sigmas2 <- c(.5, 1)
 #sigmas2 <- c(.5,.8, .4)
 #sigmas2 <- c(1,2,3,4)
 # Definir proporciones
-proporciones <- c(1)
-#proporciones <- c(0.6, 0.4)
+#proporciones <- c(1)
+proporciones <- c(0.6, 0.4)
 #proporciones <- c(0.4, 0.3, 0.3)
 #proporciones <- c(0.4, 0.3,0.2,0.1)
 # Número total de muestras a generar
 n <- 8e2
 p = dim(betas)[1]
 s = sample(c(0,1),n, replace = T)
-#X <- model.matrix(~ as.factor(s) - 1)#matrix(rnorm(n * (p-1)), nrow = n))
+X <- model.matrix(~ as.factor(s) - 1)#matrix(rnorm(n * (p-1)), nrow = n))
 #X = cbind(X, rnorm(n), rnorm(n))
-X = cbind(1,matrix(rnorm(n * (p-1)), nrow = n))
+#X = cbind(1,matrix(rnorm(n * (p-1)), nrow = n))
 
 # Calcular los tamaños de los subgrupos
 ni <- round(proporciones * n)
@@ -42,19 +42,19 @@ for (i in 1:dim(betas)[2]) {
 }
 Y = unlist(muestras)
 
-#hist(Y[X[,1]==1], freq = F, breaks = 20, ylim = c(0, 0.5), xlim = c(-15, 25))
-#X_new1 = c(1,0,2,2) #rep(-.1,9))
-#mu_new = 5
-#dens_teo1 = Vectorize(function (x) {densidad_mezcla_normales_uni_X(x, X_new1, betas, sigmas2, proporciones)})
-#grid = seq(mu_new - 20, mu_new + 20, length.out = 2000)
-#lines(grid,dens_teo1(grid), col = 3, type = "l", lwd = 3)
+hist(Y[X[,1]==1], freq = F, breaks = 20, ylim = c(0, 0.5), xlim = c(-15, 25))
+X_new1 = c(1,0) #rep(-.1,9))
+mu_new = 5
+dens_teo1 = Vectorize(function (x) {densidad_mezcla_normales_uni_X(x, X_new1, betas, sigmas2, proporciones)})
+grid = seq(mu_new - 20, mu_new + 20, length.out = 2000)
+lines(grid,dens_teo1(grid), col = 3, type = "l", lwd = 3)
 
-#hist(Y[X[,1]==0], freq = F, breaks = 50, ylim = c(0, 0.5), xlim = c(-15, 25), add = T)
-#X_new2 = c(1,1,2) #rep(-.1,9))
-#mu_new = 5
-#dens_teo2 = Vectorize(function (x) {densidad_mezcla_normales_uni_X(x, X_new2, betas, sigmas2, proporciones)})
-#grid = seq(mu_new - 20, mu_new + 20, length.out = 2000)
-#lines(grid,dens_teo2(grid), col = 4, type = "l", lwd = 3)
+hist(Y[X[,1]==0], freq = F, breaks = 50, ylim = c(0, 0.5), xlim = c(-15, 25), add = T)
+X_new2 = c(0,1) #rep(-.1,9))
+mu_new = 5
+dens_teo2 = Vectorize(function (x) {densidad_mezcla_normales_uni_X(x, X_new2, betas, sigmas2, proporciones)})
+grid = seq(mu_new - 20, mu_new + 20, length.out = 2000)
+lines(grid,dens_teo2(grid), col = 4, type = "l", lwd = 3)
 
 
 
