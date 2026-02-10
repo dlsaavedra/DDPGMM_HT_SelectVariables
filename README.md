@@ -66,12 +66,50 @@ regression models. The data are constructed using:
 The total sample size is controlled by:
 
 ``` r
+betas <- matrix(c(c(1,10), c(-3,14)), ncol = 2, byrow = F)
+sigmas2 <- c(.5, 1)
+proporciones <- c(0.6, 0.4)
 n <- 8e2
+p = dim(betas)[1]
+s = sample(c(0,1),n, replace = T)
+X <- model.matrix(~ as.factor(s) - 1)
+# Calcular los tamaños de los subgrupos
+ni <- round(proporciones * n)
+# Ajustar el último tamaño para asegurar que sume n
+ni[length(ni)] <- n - sum(ni[-length(ni)])
+aux_ni = c(0,cumsum(ni))
+# Generar muestras para cada componente
+muestras = list()
+indicadora <- c()
+for (i in 1:dim(betas)[2]) {
+  muestras[[i]] <- rnorm(ni[i], mean = X[(aux_ni[i] + 1) :aux_ni[i +1],]%*%betas[,i], sd = sqrt(sigmas2[i]))
+  indicadora <- c(indicadora, rep(i,ni[i]))
+}
+Y = unlist(muestras)
 ```
+------------------------------------------------------------------------
+
+### 3. Visualization Data
+
+
+hist(Y[X[,1]==1], freq = F, breaks = 20, ylim = c(0, 0.5), xlim = c(-15, 25))
+X_new1 = c(1,0) #rep(-.1,9))
+mu_new = 5
+dens_teo1 = Vectorize(function (x) {densidad_mezcla_normales_uni_X(x, X_new1, betas, sigmas2, proporciones)})
+grid = seq(mu_new - 20, mu_new + 20, length.out = 2000)
+lines(grid,dens_teo1(grid), col = 3, type = "l", lwd = 3)
+
+hist(Y[X[,1]==0], freq = F, breaks = 50, ylim = c(0, 0.5), xlim = c(-15, 25), add = T)
+X_new2 = c(0,1) #rep(-.1,9))
+mu_new = 5
+dens_teo2 = Vectorize(function (x) {densidad_mezcla_normales_uni_X(x, X_new2, betas, sigmas2, proporciones)})
+grid = seq(mu_new - 20, mu_new + 20, length.out = 2000)
+lines(grid,dens_teo2(grid), col = 4, type = "l", lwd = 3)
+
 
 ------------------------------------------------------------------------
 
-### 2. Hyperparameter Specification
+### 3. Hyperparameter Specification
 
 The Bayesian model uses prior distributions defined through:
 
